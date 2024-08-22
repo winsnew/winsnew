@@ -10,6 +10,7 @@ def get_yearly_commits(username, token):
         'Authorization': f'token {token}',
         'Accept': 'application/vnd.github.v3+json',
     }
+    url = f'https://api.github.com/search/commits?q=author:{username}+committer-date:>{datetime.now().year}-01-01'
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()  # Raise an exception for HTTP errors
