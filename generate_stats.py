@@ -6,7 +6,7 @@ from aiofiles import open as aio_open
 # Ganti dengan username dan repository Anda
 username = 'winsnew'
 repo = 'winsnew'
-token = os.getenv('GITHUB_TOKEN')  # Mengambil token dari variabel lingkungan
+token = os.getenv('GH_TOKEN')  # Mengambil token dari variabel lingkungan
 
 # Mendapatkan data commit secara asinkron
 async def fetch_commits(session):
