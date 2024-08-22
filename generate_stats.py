@@ -1,40 +1,41 @@
-import requests
-from datetime import datetime
+import aiohttp
+import asyncio
 import os
+from aiofiles import open as aio_open
 
-GITHUB_USERNAME = 'winsnew'
-GITHUB_TOKEN = os.getenv('GH_TOKEN')
+# Ganti dengan username dan repository Anda
+username = 'winsnew'
+repo = 'winsnew'
+token = os.getenv('GITHUB_TOKEN')  # Mengambil token dari variabel lingkungan
 
-def get_yearly_commits(username, token):
-    headers = {
-        'Authorization': f'token {token}',
-        'Accept': 'application/vnd.github.v3+json',
-    }
-    url = f'https://api.github.com/search/commits?q=author:{username}+committer-date:>{datetime.now().year}-01-01'
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        data = response.json()
-        
-        # Debugging: Print the raw response to check its structure
-        print("Raw response:", data)
-        
-        # Check if 'total_count' is in the response
-        if 'total_count' in data:
-            return data['total_count']
+# Mendapatkan data commit secara asinkron
+async def fetch_commits(session):
+    commits_url = f'https://api.github.com/repos/{username}/{repo}/commits'
+    headers = {'Authorization': f'token {token}'}
+    async with session.get(commits_url, headers=headers) as response:
+        if response.status == 200:
+            return await response.json()
         else:
-            print("Key 'total_count' not found in the response.")
-            return 0
-    except requests.RequestException as e:
-        print(f"Request failed: {e}")
-        return 0
+            response.raise_for_status()
 
-if __name__ == '__main__':
-    commits = get_yearly_commits(GITHUB_USERNAME, GITHUB_TOKEN)
-    with open('README.md', 'r') as file:
-        readme = file.readlines()
+# Mengupdate README.md
+async def update_readme(commit_count):
+    async with aio_open('README.md', 'r') as file:
+        readme_content = await file.read()
+    
+    updated_readme = readme_content.replace('<!-- COMMIT_COUNT -->', str(commit_count))
+    
+    async with aio_open('README.md', 'w') as file:
+        await file.write(updated_readme)
 
-    with open('README.md', 'w') as file:
-        for line in readme:
-            file.write(line)
-        file.write(f'\n## Yearly Contributions: {commits}\n')
+# Main function
+async def main():
+    async with aiohttp.ClientSession() as session:
+        commits = await fetch_commits(session)
+        commit_count = len(commits)
+        await update_readme(commit_count)
+
+# Run the script
+if __name__ == "__main__":
+    asyncio.run(main())
+
