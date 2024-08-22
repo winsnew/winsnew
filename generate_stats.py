@@ -1,10 +1,19 @@
 import requests
-from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+# Memuat variabel lingkungan dari file .env
+load_dotenv()
+
+# Ambil token dari variabel lingkungan
+token = os.getenv('GITHUB_TOKEN')
+
+if not token:
+    raise ValueError("GitHub token is not set in the environment.")
 
 # Ganti dengan username dan repository Anda
 username = 'winsnew'
 repo = 'winsnew'
-token = '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'
 
 headers = {'Authorization': f'token {token}'}
 
@@ -24,4 +33,3 @@ updated_readme = readme_content.replace('<!-- COMMIT_COUNT -->', str(commit_coun
 
 with open('README.md', 'w') as file:
     file.write(updated_readme)
-
