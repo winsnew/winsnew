@@ -4,7 +4,7 @@ from datetime import datetime
 # Ganti dengan username dan repository Anda
 username = 'winsnew'
 repo = 'winsnew'
-token = 'YOUR_GITHUB_TOKEN'
+token = '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'
 
 headers = {'Authorization': f'token {token}'}
 
