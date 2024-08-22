@@ -41,7 +41,7 @@ jobs:
 
       - name: Run script to update README
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python generate_stats.py
 

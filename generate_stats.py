@@ -6,7 +6,7 @@ import os
 load_dotenv()
 
 # Ambil token dari variabel lingkungan
-token = os.getenv('GH_TOKEN')
+token = os.getenv('GITHUB_TOKEN')
 
 if not token:
     raise ValueError("GitHub token is not set in the environment.")
